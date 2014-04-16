@@ -1,3 +1,5 @@
+require 'pcaprub'
+
 class TCPAnalysis
 
   def self.info

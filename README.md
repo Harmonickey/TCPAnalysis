@@ -38,3 +38,16 @@ $> git config --global user.email AAyerdi@u.northwestern.edu
 *Note that there are no quotation marks for the email.*
 
 This all ensures for proper version control and documentation.  Branches are suggested for testing, but not necessary.
+
+How to Install libpcap and libpcap-ruby
+=======================================
+
+You are going to need two library files in order to use the pcaprub rubygem that is included in the TCPAnlysis tool.
+
+Ubuntu/Linux - You may need to be sudo to run this command.
+$> aptitude install libpcap-dev libpcap-ruby
+or
+$> apt-get install libpcap-dev libpcap-ruby
+
+Other UNIX flavors -
+$> Some command that installs libpcap-dev and libpcap-ruby
