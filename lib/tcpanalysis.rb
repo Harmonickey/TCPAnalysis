@@ -5,7 +5,7 @@ class TCPAnalysis
   end
 
   def self.tcpdump options
-    `tcpdump #{options}`
+    `sudo tcpdump #{options}`
   end
 
 end
