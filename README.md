@@ -6,7 +6,7 @@ Problems in Cloud Computing - Project 8 - Northwestern University - TCP Analysis
 How To Install
 ==============
 
-Go into the master directory and execute the following.
+Go into the master directory and execute the following.  You may need to skip to How to Add and Build first to get this gem file.
 
 $> gem install tcpanalysis-0.0.0.gem
 
