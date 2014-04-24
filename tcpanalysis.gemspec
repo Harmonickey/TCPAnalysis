@@ -10,6 +10,6 @@ Gem::Specification.new do |s|
   s.bindir         = 'bin'
   s.homepage       = 'https://github.com/Harmonickey/TCPAnalysis'
   s.license        = 'MIT'
-  s.require_paths  = ["lib"]
+  s.require_paths  = ["lib", "tmp"]
   s.executables    = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
 end
