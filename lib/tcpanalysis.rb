@@ -43,7 +43,7 @@ class TCPAnalysis
   end
   
   def self.tcptrace options, dir 
-    `sudo tcptrace -#{options} tmp/pcap/out.pcap --output_dir="#{dir}"`
+    `sudo tcptrace -#{options} --output_dir="#{dir}" tmp/pcap/out.pcap`
   end
 
   def self.getGpl xpl, gpl
