@@ -11,14 +11,24 @@ class TCPAnalysis
       puts "Example: wlan0"
     end
 
-    puts "What do you want to capture?"
+    puts "What do you want to capture? : Ex. G"
     @tcptraceOpts = gets.chomp
 
-    puts "How many packets do you want to capture?"
-    @num_packets = gets.chomp
-    
+    begin 
+      puts "Do you want to do 'Time Capture' or 'Num Packets Capture : T or N'"
+      @type = gets.chomp
+    end while @type != 'T' and @type != 'N'
+     
     #run tcpdump
-    tcpdump lanPort, @num_packets
+    if @type == 'T'
+      puts "How much time do you want to run to capture? : #"
+      @time_capture = gets.chomp
+      tcpdump lanPort, @time_capture, @type
+    elsif @type == 'N'
+      puts "How many packets do you want to capture? : #"
+      @num_packets = gets.chomp
+      tcpdump lanPort, @num_packets, @type
+    end
   
   end
 
@@ -43,8 +53,12 @@ class TCPAnalysis
     gnuplot @gpl_dir
   end
 
-  def self.tcpdump interface, num_packets
-    `sudo tcpdump -i #{interface} -c #{num_packets} -w out.pcap`
+  def self.tcpdump interface, input, type
+    if type == 'T'
+      `sudo tcpdump -i #{interface} -G #{input} -z rerun_with_pcap.rb -w out.pcap`
+    elsif type == 'N'
+      `sudo tcpdump -i #{interface} -c #{input} -w out.pcap`
+    end
     analyzePcap "out.pcap"
   end
   
@@ -91,4 +105,3 @@ class TCPAnalysis
   end
 end
 
-TCPAnalysis.run 'wlan0'
