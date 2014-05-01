@@ -55,7 +55,8 @@ class TCPAnalysis
 
   def self.tcpdump interface, input, type
     if type == 'T'
-      `sudo tcpdump -i #{interface} -G #{input} -z rerun_with_pcap.rb -w out.pcap`
+      `sudo tcpdump -i #{interface} -w out.pcap & sleep #{input}s && pkill -HUP -f tcpdump` 
+      #`sudo tcpdump -i #{interface} -G #{input} -z rerun_with_pcap.rb -w out.pcap`
     elsif type == 'N'
       `sudo tcpdump -i #{interface} -c #{input} -w out.pcap`
     end
