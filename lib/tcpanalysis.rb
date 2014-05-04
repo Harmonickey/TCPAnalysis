@@ -33,8 +33,9 @@ class TCPAnalysis
   end
 
   def self.analyzePcap pcap
-
+    puts "Moving pcap file"
     `sudo mv #{pcap} tmp/pcap/`
+    puts "Finished moving pcap file"
 
     @xpl_dir = "tmp/xpl_#{Time.now.to_i.to_s}"
 
@@ -54,40 +55,56 @@ class TCPAnalysis
   end
 
   def self.tcpdump interface, input, type
+    puts "Starting TCPDump"
     if type == 'T'
-      `sudo tcpdump -i #{interface} -w out.pcap & sleep #{input}s && pkill -HUP -f tcpdump` 
-      #`sudo tcpdump -i #{interface} -G #{input} -z rerun_with_pcap.rb -w out.pcap`
+      `sudo tcpdump -i #{interface} -w out.pcap & sleep #{input}s && sudo pkill -HUP -f tcpdump` 
     elsif type == 'N'
       `sudo tcpdump -i #{interface} -c #{input} -w out.pcap`
     end
+    puts "Finished TCPDump"
     analyzePcap "out.pcap"
   end
   
   def self.tcptrace options, dir, pcap 
+    puts "Starting TCPTrace"
     `sudo tcptrace -#{options} --output_dir="#{dir}" #{pcap}`
+    puts "Finishing TCPTrace"
   end
 
   def self.getGpl xpl, gpl
     @xpl_files = `find #{xpl} -type f -print | grep .xpl`.split("\n").map{ |file| file.gsub('./', '')}
+    puts "Converting all xpl to gpl"
     @xpl_files.each do |file|
       `sudo xpl2gpl #{file}`
     end 
+    puts "Finished conversion"
   end
 
   def self.gnuplot gpl
 
+    puts "Moving and sorting all relavant files"
     move_files gpl, ".gpl"
     move_files gpl, ".datasets"
     move_files gpl, ".labels"
 
-    sort_into_own_dir gpl, "rtt"
-    sort_into_own_dir gpl, "tput"
-    sort_into_own_dir gpl, "ssize"
-    sort_into_own_dir gpl, "owin"
-    sort_into_own_dir gpl, "tsg"
-    sort_into_own_dir gpl, "tline"
+    @gpl_dirs = Array.new
 
-    #`gnuplot #{@gpl_files}`
+    @gpl_dirs.push sort_into_own_dir gpl, "rtt"
+    @gpl_dirs.push sort_into_own_dir gpl, "tput"
+    @gpl_dirs.push sort_into_own_dir gpl, "ssize"
+    @gpl_dirs.push sort_into_own_dir gpl, "owin"
+    @gpl_dirs.push sort_into_own_dir gpl, "tsg"
+    @gpl_dirs.push sort_into_own_dir gpl, "tline"
+    puts "Finished move and sort"
+
+    puts "Starting plots"
+    @gpl_dirs.each do |dir|
+      Dir.chdir "#{dir}" do 
+        @gpl_files = `find . -type f -print | grep .gpl`.split("\n").map{ |file| file.gsub('./', '')}.sort().join(" ")
+        spawn "gnuplot #{@gpl_files}"
+      end
+    end
+    puts "Finished plots"
   end
  
   def self.move_files gpl, pattern
@@ -103,6 +120,7 @@ class TCPAnalysis
     @matched_files.each do |file|
       `sudo mv #{file} #{dir}/#{pattern}`
     end
+    return "#{dir}/#{pattern}"
   end
 end
 
