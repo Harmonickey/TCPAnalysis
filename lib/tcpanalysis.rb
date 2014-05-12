@@ -98,6 +98,53 @@ class TCPAnalysis
     parseOutput output
   end
 
+  def self.tcptrace3 dir, pcap
+    output = `sudo tcptrace -rl --output_dir="#{dir}" #{pcap}`
+
+    parseOutput2 output
+  end
+
+  def self.parseOutput2 output
+    File.open("test_output_there.dataset", "w") do |dt_file|
+    File.open("test_output_back.dataset", "w") do |db_file|
+      tcp_connections = output.split("================================")
+      tcp_connections.each do |conn|
+        data = conn.split("\n")
+        rttThere = parseRTT data[data.length - 20], 'there'
+        next if rttThere == 'NA'
+        rttBack = parseRTT data[data.length - 20], 'back'
+        connection = parseConnection data[0]
+        dt_file.puts connection.to_s + " " + rttThere.to_s
+        db_file.puts connection.to_s + " " + rttBack.to_s
+      end
+    end
+    end
+    File.open("test_output.gpl", "w") do |g_file|
+      g_file.puts "set   autoscale                        # scale axes automatically"
+      g_file.puts "unset log                              # remove any log-scaling"
+      g_file.puts "unset label                            # remove any previous labels"
+      g_file.puts "set xtic auto                          # set xtics automatically"
+      g_file.puts "set ytic auto                          # set ytics automatically"
+      g_file.puts "set title 'Throughput vs Time'"
+      g_file.puts "set xlabel 'Timestamp (minute)'"
+      g_file.puts "set ylabel 'Throughput (Bps)'"
+      g_file.puts "plot    'test_output_there.dataset' using 1:2 title 'There' with linespoints , \\"
+      g_file.puts "        'test_output_back.dataset' using 1:2 title 'Back' with linespoints" 
+    end
+  end
+
+  def self.parseRTT rtt, which
+    parts = rtt.split(" ")
+    offset = 2 if which == 'there'
+    offset = 6 if which == 'back' 
+    parts[offset]
+  end
+
+  def self.parseConnection conn
+    parts = conn.split(" ")
+    parts[2].split(":")[0]
+  end
+
   def self.parseOutput output
     File.open("test_output_there.dataset", "w") do |dt_file|
     File.open("test_output_back.dataset", "w") do |db_file|
@@ -201,4 +248,3 @@ class TCPAnalysis
   end
 end
 
-TCPAnalysis.run 'wlan0'
