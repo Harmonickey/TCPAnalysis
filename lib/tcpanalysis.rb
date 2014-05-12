@@ -40,7 +40,7 @@ class TCPAnalysis
 
     gpl_dir = "tmp/gpl_#{Time.now.to_i.to_s}"
 
-    tcptrace2 xpl_dir, "tmp/pcap/#{pcap}"
+    tcptrace3 xpl_dir, "tmp/pcap/#{pcap}"
   end
 
   def self.analyzePcap pcap
