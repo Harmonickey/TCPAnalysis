@@ -3,4 +3,10 @@
 *.txt
 *.gem
 tmp
+*.gpl
+*.xpl
+.files
+*.dataset
+*.labels
+*.ps
 
