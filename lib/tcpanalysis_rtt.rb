@@ -31,7 +31,7 @@ class TCPAnalysis
   end
 
   def self.analyzePcap pcap
-    `sudo mv #{pcap} rtt/pcap/`
+    `sudo cp #{pcap} rtt/pcap/`
     xpl_dir = "rtt/xpl_#{Time.now.to_i.to_s}"
     `mkdir #{xpl_dir}`
 
