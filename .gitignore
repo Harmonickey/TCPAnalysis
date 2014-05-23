@@ -9,4 +9,6 @@ tmp
 *.dataset
 *.labels
 *.ps
-
+rtt
+thrpt
+num
